@@ -64,8 +64,10 @@
         <h1>${plant.sanskritName || plant.id}</h1>
         ${plant.latinName ? `<p class="latin">${plant.latinName}</p>` : ''}
         ${plant.family ? `<p class="family">${plant.family}</p>` : ''}
+        ${plant.image ? `<img class="specimen-photo" src="${plant.image}" alt="${plant.sanskritName || plant.id}">` : ''}
 
         <dl class="dl-grid">
+          ${row('Synonyms', plant.synonyms)}
           ${row('Hindi name', plant.hindiName)}
           ${row('Rasa (taste)', plant.rasa)}
           ${row('Guna (qualities)', plant.guna)}
@@ -80,6 +82,7 @@
           ${plant.dose ? `<span class="tag rust">Dose: ${plant.dose}</span>` : ''}
         </div>
 
+        ${prose('Morphology', plant.morphology)}
         ${prose('Therapeutic uses', plant.indications)}
         ${prose('Precautions', plant.precautions)}
         ${prose('Notes', plant.notes)}

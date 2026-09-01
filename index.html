@@ -94,6 +94,7 @@
     grid.innerHTML = filtered.map((p, i) => `
       <a class="card" href="plant.html?id=${encodeURIComponent(p.id)}">
         <span class="acc">No. ${String(i + 1).padStart(3, '0')}</span>
+        ${p.image ? `<img class="card-thumb" src="${p.image}" alt="">` : ''}
         <h3>${p.sanskritName || p.id}</h3>
         ${p.latinName ? `<p class="latin">${p.latinName}</p>` : ''}
         <div class="tags">
