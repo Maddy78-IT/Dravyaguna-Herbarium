@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR codes — Dravyaguna Herbarium</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <a class="site-title" href="index.html">
+      Dravyaguna Herbarium
+      <small>A specimen catalogue, one QR code per plant</small>
+    </a>
+    <nav class="site-nav">
+      <a href="index.html">Specimens</a>
+      <a href="qrcodes.html" class="current">QR codes</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="qr-setup">
+    <div>
+      <label for="baseUrl">Your site's live URL (after GitHub Pages is on)</label>
+      <input type="text" id="baseUrl" placeholder="https://yourname.github.io/dravyaguna-herbarium">
+    </div>
+    <button class="btn" id="generateAll">Generate all codes</button>
+    <button class="btn ghost" id="printAll">Print sheet</button>
+  </div>
+
+  <div id="qrList" class="qr-list"></div>
+  <div id="qrEmpty" class="empty" hidden>
+    <h3>Nothing to generate yet</h3>
+    <p>Add plants in <code>data/plants.js</code> first — each one will get its own QR card here automatically.</p>
+  </div>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">Each code points to <code>plant.html?id=…</code> on the URL above — deploy the site before scanning.</div>
+</footer>
+
+<script src="data/plants.js"></script>
+<script>
+  const list = document.getElementById('qrList');
+  const emptyState = document.getElementById('qrEmpty');
+  const baseUrlInput = document.getElementById('baseUrl');
+  const generateAllBtn = document.getElementById('generateAll');
+  const printAllBtn = document.getElementById('printAll');
+
+  const savedUrl = localStorage.getItem('herbariumBaseUrl');
+  if (savedUrl) baseUrlInput.value = savedUrl;
+
+  if (PLANTS.length === 0) {
+    emptyState.hidden = false;
+  } else {
+    list.innerHTML = PLANTS.map(p => `
+      <div class="qr-card" data-id="${p.id}">
+        <h3>${p.sanskritName || p.id}</h3>
+        <div class="qr-box"><span style="color:#7d9179;font-size:0.8rem;">Not generated yet</span></div>
+        <div class="qr-actions">
+          <button class="btn ghost gen-one">Generate</button>
+          <button class="btn download-one" hidden>Download</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function targetUrl(plantId) {
+    const base = baseUrlInput.value.trim().replace(/\/$/, '');
+    if (!base) return null;
+    return `${base}/plant.html?id=${encodeURIComponent(plantId)}`;
+  }
+
+  function generateCard(card) {
+    const id = card.dataset.id;
+    const url = targetUrl(id);
+    const box = card.querySelector('.qr-box');
+    if (!url) {
+      box.innerHTML = `<span style="color:#8c4a2f;font-size:0.8rem;">Enter your site URL above first</span>`;
+      return;
+    }
+    box.innerHTML = '';
+    new QRCode(box, { text: url, width: 128, height: 128, colorDark: '#24261f', colorLight: '#faf8f0' });
+    card.querySelector('.download-one').hidden = false;
+  }
+
+  list.addEventListener('click', (e) => {
+    const card = e.target.closest('.qr-card');
+    if (!card) return;
+
+    if (e.target.classList.contains('gen-one')) {
+      generateCard(card);
+    }
+
+    if (e.target.classList.contains('download-one')) {
+      const canvas = card.querySelector('canvas');
+      if (!canvas) return;
+      const link = document.createElement('a');
+      link.download = `${card.dataset.id}-qr.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+  });
+
+  generateAllBtn.addEventListener('click', () => {
+    localStorage.setItem('herbariumBaseUrl', baseUrlInput.value.trim());
+    document.querySelectorAll('.qr-card').forEach(generateCard);
+  });
+
+  printAllBtn.addEventListener('click', () => window.print());
+</script>
+
+</body>
+</html>

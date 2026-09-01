@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dravyaguna Herbarium</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <a class="site-title" href="index.html">
+      Dravyaguna Herbarium
+      <small>A specimen catalogue, one QR code per plant</small>
+    </a>
+    <nav class="site-nav">
+      <a href="index.html" class="current">Specimens</a>
+      <a href="qrcodes.html">QR codes</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <div>
+      <h1>Every plant in the syllabus, one scan away</h1>
+      <p>Each specimen below carries its own rasa–guna–virya–vipaka profile. Print a label, stick a QR code on the real plant or a flashcard, and scan straight through to its page.</p>
+    </div>
+    <div class="hero-art">
+      <svg width="200" height="220" viewBox="0 0 200 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M100 210 C100 140 100 100 100 20" stroke="#33513a" stroke-width="2"/>
+        <path d="M100 60 C70 50 50 30 45 10" stroke="#33513a" stroke-width="1.6" fill="none"/>
+        <path d="M100 60 C70 50 50 30 45 10 C60 30 75 45 100 60Z" fill="#7d9179" opacity="0.35"/>
+        <path d="M100 90 C130 78 150 55 158 30" stroke="#33513a" stroke-width="1.6" fill="none"/>
+        <path d="M100 90 C130 78 150 55 158 30 C140 55 122 72 100 90Z" fill="#7d9179" opacity="0.35"/>
+        <path d="M100 120 C68 112 44 92 32 68" stroke="#33513a" stroke-width="1.6" fill="none"/>
+        <path d="M100 120 C68 112 44 92 32 68 C50 90 72 106 100 120Z" fill="#b9862e" opacity="0.3"/>
+        <path d="M100 150 C132 144 158 126 170 104" stroke="#33513a" stroke-width="1.6" fill="none"/>
+        <path d="M100 150 C132 144 158 126 170 104 C154 124 130 140 100 150Z" fill="#b9862e" opacity="0.3"/>
+        <ellipse cx="100" cy="205" rx="30" ry="6" fill="#c2b99e" opacity="0.5"/>
+      </svg>
+    </div>
+  </section>
+
+  <div class="controls">
+    <div class="search-field">
+      <input type="text" id="search" placeholder="Search by Sanskrit, Hindi or Latin name…" autocomplete="off">
+    </div>
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <div id="grid" class="grid"></div>
+  <div id="empty" class="empty" hidden>
+    <h3>No specimens pressed yet</h3>
+    <p>Open <code>data/plants.js</code> and add your first plant — copy the template object at the top of the file, fill in the fields, and save. This page picks it up automatically.</p>
+  </div>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">Dravyaguna Herbarium — built for personal study.</div>
+</footer>
+
+<script src="data/plants.js"></script>
+<script>
+  const grid = document.getElementById('grid');
+  const emptyState = document.getElementById('empty');
+  const searchInput = document.getElementById('search');
+  const chipsWrap = document.getElementById('chips');
+
+  let activeCategory = null;
+
+  function render() {
+    const q = searchInput.value.trim().toLowerCase();
+
+    const filtered = PLANTS.filter(p => {
+      const matchesSearch = !q || [p.sanskritName, p.hindiName, p.latinName]
+        .filter(Boolean)
+        .some(name => name.toLowerCase().includes(q));
+      const matchesCategory = !activeCategory || p.category === activeCategory;
+      return matchesSearch && matchesCategory;
+    });
+
+    if (PLANTS.length === 0) {
+      emptyState.hidden = false;
+      grid.hidden = true;
+      return;
+    }
+    emptyState.hidden = true;
+    grid.hidden = false;
+
+    grid.innerHTML = filtered.map((p, i) => `
+      <a class="card" href="plant.html?id=${encodeURIComponent(p.id)}">
+        <span class="acc">No. ${String(i + 1).padStart(3, '0')}</span>
+        <h3>${p.sanskritName || p.id}</h3>
+        ${p.latinName ? `<p class="latin">${p.latinName}</p>` : ''}
+        <div class="tags">
+          ${p.virya ? `<span class="tag ochre">${p.virya}</span>` : ''}
+          ${(p.rasa || []).slice(0, 2).map(r => `<span class="tag">${r}</span>`).join('')}
+        </div>
+      </a>
+    `).join('');
+  }
+
+  function buildChips() {
+    const categories = [...new Set(PLANTS.map(p => p.category).filter(Boolean))];
+    chipsWrap.innerHTML = categories.map(c =>
+      `<button class="chip" data-cat="${c}">${c}</button>`
+    ).join('');
+    chipsWrap.querySelectorAll('.chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const cat = btn.dataset.cat;
+        activeCategory = activeCategory === cat ? null : cat;
+        chipsWrap.querySelectorAll('.chip').forEach(b =>
+          b.classList.toggle('active', b.dataset.cat === activeCategory)
+        );
+        render();
+      });
+    });
+  }
+
+  searchInput.addEventListener('input', render);
+  buildChips();
+  render();
+</script>
+
+</body>
+</html>

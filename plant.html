@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Specimen — Dravyaguna Herbarium</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <a class="site-title" href="index.html">
+      Dravyaguna Herbarium
+      <small>A specimen catalogue, one QR code per plant</small>
+    </a>
+    <nav class="site-nav">
+      <a href="index.html">Specimens</a>
+      <a href="qrcodes.html">QR codes</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" id="main">
+  <!-- filled by script -->
+</main>
+
+<footer class="site">
+  <div class="wrap">Dravyaguna Herbarium — built for personal study.</div>
+</footer>
+
+<script src="data/plants.js"></script>
+<script>
+  const main = document.getElementById('main');
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  const plant = PLANTS.find(p => p.id === id);
+
+  function row(label, value) {
+    if (!value || (Array.isArray(value) && value.length === 0)) return '';
+    const shown = Array.isArray(value) ? value.join(', ') : value;
+    return `<div class="row"><dt>${label}</dt><dd>${shown}</dd></div>`;
+  }
+
+  function prose(title, text) {
+    if (!text) return '';
+    return `<section class="prose"><h2>${title}</h2><p>${text}</p></section>`;
+  }
+
+  if (!plant) {
+    main.innerHTML = `
+      <div class="not-found">
+        <h1>Specimen not found</h1>
+        <p>There's no plant with id "<strong>${id || ''}</strong>" in <code>data/plants.js</code> yet.</p>
+        <p><a href="index.html">← Back to the herbarium</a></p>
+      </div>
+    `;
+  } else {
+    const index = PLANTS.indexOf(plant) + 1;
+    main.innerHTML = `
+      <a class="back-link" href="index.html">← Back to the herbarium</a>
+      <article class="sheet">
+        <span class="acc">No. ${String(index).padStart(3, '0')}</span>
+        <h1>${plant.sanskritName || plant.id}</h1>
+        ${plant.latinName ? `<p class="latin">${plant.latinName}</p>` : ''}
+        ${plant.family ? `<p class="family">${plant.family}</p>` : ''}
+
+        <dl class="dl-grid">
+          ${row('Hindi name', plant.hindiName)}
+          ${row('Rasa (taste)', plant.rasa)}
+          ${row('Guna (qualities)', plant.guna)}
+          ${row('Virya (potency)', plant.virya)}
+          ${row('Vipaka', plant.vipaka)}
+          ${row('Prabhava', plant.prabhava)}
+          ${row('Karma (actions)', plant.karma)}
+        </dl>
+
+        <div class="tag-row">
+          ${plant.partUsed ? `<span class="tag">Part used: ${plant.partUsed}</span>` : ''}
+          ${plant.dose ? `<span class="tag rust">Dose: ${plant.dose}</span>` : ''}
+        </div>
+
+        ${prose('Therapeutic uses', plant.indications)}
+        ${prose('Precautions', plant.precautions)}
+        ${prose('Notes', plant.notes)}
+      </article>
+    `;
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,511 @@
+/* ---------------------------------------------------------
+   Dravyaguna Herbarium — design tokens
+   A pressed-specimen / field-ledger aesthetic:
+   warm paper, deep leaf green, turmeric accent, hairline rules.
+--------------------------------------------------------- */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Karla:wght@400;500;600&display=swap');
+
+:root {
+  --paper: #f3f0e4;
+  --paper-raised: #faf8f0;
+  --ink: #24261f;
+  --ink-soft: #55584a;
+  --leaf: #33513a;
+  --leaf-deep: #223828;
+  --sage: #7d9179;
+  --ochre: #b9862e;
+  --rust: #8c4a2f;
+  --line: #d9d2be;
+  --line-strong: #c2b99e;
+
+  --display: 'Fraunces', serif;
+  --body: 'Karla', sans-serif;
+
+  --max: 880px;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--leaf-deep); }
+a:hover { color: var(--ochre); }
+
+:focus-visible {
+  outline: 2px solid var(--ochre);
+  outline-offset: 2px;
+}
+
+.wrap {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* -------------------- header -------------------- */
+
+header.site {
+  border-bottom: 1px solid var(--line);
+  padding: 22px 0;
+}
+
+header.site .wrap {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.site-title {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.4rem;
+  letter-spacing: 0.01em;
+  color: var(--leaf-deep);
+  text-decoration: none;
+}
+
+.site-title:hover { color: var(--leaf-deep); }
+
+.site-title small {
+  display: block;
+  font-family: var(--body);
+  font-weight: 400;
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+  letter-spacing: 0.03em;
+  margin-top: 2px;
+}
+
+nav.site-nav {
+  display: flex;
+  gap: 18px;
+  font-size: 0.92rem;
+}
+
+nav.site-nav a {
+  text-decoration: none;
+  color: var(--ink-soft);
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+}
+
+nav.site-nav a:hover,
+nav.site-nav a.current {
+  color: var(--leaf-deep);
+  border-bottom-color: var(--ochre);
+}
+
+/* -------------------- hero -------------------- */
+
+.hero {
+  padding: 56px 0 40px;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.hero h1 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(1.9rem, 3.4vw, 2.6rem);
+  line-height: 1.15;
+  margin: 0 0 14px;
+  max-width: 16ch;
+}
+
+.hero p {
+  max-width: 46ch;
+  color: var(--ink-soft);
+  font-size: 1.02rem;
+}
+
+.hero-art {
+  justify-self: end;
+}
+
+@media (max-width: 720px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-art { justify-self: start; width: 60%; }
+}
+
+/* -------------------- search + filters -------------------- */
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  padding: 4px 0 28px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 28px;
+}
+
+.search-field {
+  flex: 1 1 220px;
+  position: relative;
+}
+
+.search-field input {
+  width: 100%;
+  font-family: var(--body);
+  font-size: 0.95rem;
+  padding: 10px 14px;
+  border: 1px solid var(--line-strong);
+  background: var(--paper-raised);
+  color: var(--ink);
+  border-radius: 3px;
+}
+
+.search-field input:focus { border-color: var(--ochre); }
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  font-family: var(--body);
+  font-size: 0.82rem;
+  padding: 6px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 3px;
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.chip:hover { border-color: var(--ochre); color: var(--ink); }
+
+.chip.active {
+  background: var(--leaf);
+  border-color: var(--leaf);
+  color: var(--paper-raised);
+}
+
+/* -------------------- specimen grid -------------------- */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 18px;
+  padding-bottom: 60px;
+}
+
+.card {
+  position: relative;
+  border: 1px solid var(--line-strong);
+  background: var(--paper-raised);
+  padding: 18px 16px 16px;
+  text-decoration: none;
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.15s ease;
+}
+
+.card:hover { border-color: var(--leaf); }
+
+.card .acc {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 0.68rem;
+  color: var(--sage);
+  letter-spacing: 0.04em;
+}
+
+.card h3 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  margin: 6px 0 0;
+  color: var(--leaf-deep);
+}
+
+.card .latin {
+  font-style: italic;
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+  margin: 0;
+}
+
+.card .tags {
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-top: 10px;
+}
+
+.tag {
+  font-size: 0.72rem;
+  border: 1px solid var(--line-strong);
+  padding: 3px 8px;
+  border-radius: 2px;
+  color: var(--ink-soft);
+}
+
+.tag.rust { border-color: var(--rust); color: var(--rust); }
+.tag.ochre { border-color: var(--ochre); color: var(--ochre); }
+
+/* -------------------- empty state -------------------- */
+
+.empty {
+  border: 1px dashed var(--line-strong);
+  padding: 40px 32px;
+  text-align: left;
+  color: var(--ink-soft);
+  margin-bottom: 60px;
+}
+
+.empty h3 {
+  font-family: var(--display);
+  color: var(--leaf-deep);
+  margin-top: 0;
+}
+
+.empty code {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  padding: 1px 6px;
+  border-radius: 2px;
+  font-size: 0.85em;
+}
+
+/* -------------------- specimen sheet (plant.html) -------------------- */
+
+.back-link {
+  display: inline-block;
+  margin: 28px 0 10px;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+
+.back-link:hover { color: var(--ochre); }
+
+.sheet {
+  border: 1px solid var(--line-strong);
+  background: var(--paper-raised);
+  padding: 36px 40px 40px;
+  margin: 12px 0 60px;
+  position: relative;
+}
+
+.sheet .acc {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  font-size: 0.7rem;
+  color: var(--sage);
+  letter-spacing: 0.04em;
+}
+
+.sheet h1 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(1.8rem, 3vw, 2.3rem);
+  margin: 0 0 2px;
+  color: var(--leaf-deep);
+}
+
+.sheet .latin {
+  font-style: italic;
+  color: var(--ink-soft);
+  font-size: 1.05rem;
+  margin: 0 0 4px;
+}
+
+.sheet .family {
+  font-size: 0.85rem;
+  color: var(--sage);
+  margin: 0 0 26px;
+}
+
+.dl-grid {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  border-top: 1px solid var(--line);
+}
+
+.dl-grid .row {
+  display: contents;
+}
+
+.dl-grid dt,
+.dl-grid dd {
+  margin: 0;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.dl-grid dt {
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+  padding-right: 16px;
+}
+
+.dl-grid dd { font-size: 0.95rem; }
+
+@media (max-width: 560px) {
+  .dl-grid { grid-template-columns: 1fr; }
+  .dl-grid dt { border-bottom: none; padding-bottom: 2px; font-weight: 600; }
+  .dl-grid dd { padding-top: 0; }
+}
+
+.tag-row {
+  display: flex;
+  gap: 8px;
+  margin: 22px 0 6px;
+  flex-wrap: wrap;
+}
+
+.sheet section.prose {
+  margin-top: 26px;
+}
+
+.sheet section.prose h2 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--leaf-deep);
+  margin: 0 0 6px;
+}
+
+.sheet section.prose p {
+  margin: 0;
+  color: var(--ink);
+  max-width: 62ch;
+}
+
+.not-found {
+  padding: 60px 0;
+}
+
+.not-found h1 {
+  font-family: var(--display);
+  color: var(--leaf-deep);
+}
+
+/* -------------------- qr page -------------------- */
+
+.qr-setup {
+  border: 1px solid var(--line-strong);
+  background: var(--paper-raised);
+  padding: 20px 24px;
+  margin: 24px 0 32px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.qr-setup label {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+
+.qr-setup input {
+  width: 340px;
+  max-width: 100%;
+  font-family: var(--body);
+  font-size: 0.9rem;
+  padding: 9px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 3px;
+  background: var(--paper);
+}
+
+button.btn {
+  font-family: var(--body);
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding: 9px 16px;
+  border: 1px solid var(--leaf);
+  background: var(--leaf);
+  color: var(--paper-raised);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+button.btn:hover { background: var(--leaf-deep); }
+
+button.btn.ghost {
+  background: transparent;
+  color: var(--leaf-deep);
+}
+
+button.btn.ghost:hover { background: var(--paper); }
+
+.qr-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  padding-bottom: 60px;
+}
+
+.qr-card {
+  border: 1px solid var(--line-strong);
+  background: var(--paper-raised);
+  padding: 16px;
+  text-align: center;
+}
+
+.qr-card h3 {
+  font-family: var(--display);
+  font-size: 1rem;
+  margin: 0 0 10px;
+  color: var(--leaf-deep);
+}
+
+.qr-card .qr-box {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+  min-height: 132px;
+  align-items: center;
+}
+
+.qr-card .qr-box canvas,
+.qr-card .qr-box img { image-rendering: pixelated; }
+
+.qr-card .qr-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.qr-card .qr-actions button {
+  font-size: 0.78rem;
+  padding: 6px 10px;
+}
+
+@media print {
+  header.site, .qr-setup, nav.site-nav, .search-field, .controls { display: none !important; }
+  .qr-card { break-inside: avoid; }
+}
+
+footer.site {
+  border-top: 1px solid var(--line);
+  padding: 22px 0 40px;
+  color: var(--sage);
+  font-size: 0.8rem;
+}
